@@ -5,3 +5,4 @@ Oops I meant to name that last commit '3rd commit'
 But I guess I should have just did '4th commit' and the last one was supposed to be '5th commit'
 Oh well. 7th commit right now
 Adding something to README
+I think I have this down
