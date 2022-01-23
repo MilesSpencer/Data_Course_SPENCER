@@ -1,0 +1,49 @@
+getwd()
+
+#create obj for csv files in Data
+
+csv_files <- list.files(path='../../Data', #../ go up 1 directory can be stacked
+                        pattern = '.csv',
+                        full.names = TRUE,
+                        recursive = TRUE
+                        )
+
+#how many are in csv_files
+
+length(csv_files)
+
+#Open the wingspan_vs_mass.csv file and store the contents as an R object named 
+#“df” using the read.csv() function
+
+wsvm <- list.files(path = '../../Data', #go find the specific file in Data
+                   pattern = 'wingspan_vs_mass.csv',
+                   full.names = TRUE)
+df <- read.csv(wsvm)
+
+class(df) #data type
+str(df) #small preview of object
+
+#use head to inspect first 5 lines of df
+
+?head
+head(df, n = 5)
+
+#find files in Data that starts with 'b'
+
+b_files <- list.files(path='../../Data',
+                      pattern = '^b',
+                      full.names = TRUE,
+                      recursive = TRUE
+                      )
+
+#print first line of each files that starts with 'b'
+
+for (i in 1:length(b_files)) {
+  print(readLines(b_files[i])[1])
+}
+
+#print first line of each csv file
+
+for (i in 1:length(csv_files)) {
+  print(readLines(csv_files[i])[1])
+}
