@@ -6,7 +6,8 @@
 
 # Instructions ####
 # Fill in this script with stuff that we do in class.
-# It might be a good idea to include comments/notes as well so you remember things we talk about
+# It might be a good idea to include comments/notes as well so you remember 
+# things we talk about
 # At the end of this script are some comments with blank space after them
 # They are plain-text instructions for what you need to accomplish.
 # Your task is to write the code that accomplished those tasks.
@@ -25,7 +26,7 @@ letters # built-in pre-made vector of a - z
 
 
 vector1 <- c(1,2,3,4,5,6,7,8,9,10)
-vector2 <- c(5,6,7,8,4,3,2,1,3,10)
+vector2 <- c(5,6,7,8,4,3,2,1,3,10) #order matters
 vector3 <- letters # letters and LETTERS are built-in vectors
 
 vector1 + 5
@@ -43,6 +44,7 @@ vector1 <= 5
 vector1 == 7
 letters == "a"
 letters != "c"
+# %in% checks letters == for each value in c(...)
 letters %in% c("a","b","c","z")
 vector1 %in% 1:6
 
@@ -63,18 +65,20 @@ data("iris") # load it like this
 dat <- iris # can rename the object to be easier to type if you want
 
 # ways to get a peek at our data set
-names(dat)
-dim(dat)
-head(dat)
+names(dat) #vector names
+dim(dat) #vectors by vector length
+head(dat) #preview of first 6 lines
 
 
 # You can access specific columns of a "data frame" by name using '$'
 dat$Species
 dat$Sepal.Length
 
-# You can also use square brackets to get specific 1-D or 2-D subsets of a data frame (rows and/or columns)
+# You can also use square brackets to get specific 1-D or 2-D subsets of a data 
+# frame (rows and/or columns)
 dat[1,1] # [Rows, Columns]
 dat[1:3,5]
+levels(dat$Species) #return levels of categorical data
 
 vector2[1]
 letters[1:7]
@@ -99,7 +103,8 @@ class(dat$Species)
 # Check all classes (for each column in dat)
 str(dat)
 
-# "Classes" of vectors can be changed if needed (you'll need to, for sure, at some point!)
+# "Classes" of vectors can be changed if needed (you'll need to, for sure
+# at some point!)
 
 # Let's try
 nums <- c(1,1,2,2,2,2,3,3,3,4,4,4,4,4,4,4,5,6,7,8,9)
@@ -113,33 +118,35 @@ class(nums_factor) # check it
 
 # convert numeric to character
 as.character(vector1)
-as.character(vector1) + 5
+as.character(vector1) + 5 # cannot be done
 
 # convert character to numeric
-as.numeric(vector3)
+as.numeric(vector3) #char convert to NA when expressed as numeric
 
 
 
 
 #check it out
-plot(nums) 
-plot(nums_factor)
+plot(nums) # default x to index
+plot(nums_factor) # returns frequency of the factors
 # take note of how numeric vectors and factors behave differently in plot()
 
 
 
 
 # Simple numeric functions
-# R is a language built for data analysis and statistics so there is a lot of functionality built-in
+# R is a language built for data analysis and statistics so there is a lot of 
+# functionality built-in
 
 max(vector1)
 min(vector1)
 median(vector1)
 mean(vector1)
-range(vector1)
+range(vector1) # vector of min, max
 summary(vector1)
 
-# cumulative functions
+# cumulative functions go from index to index
+# takes first operated with second, result oped with third, result oped with fourth...
 cumsum(vector1)
 cumprod(vector1)
 cummin(vector1)
@@ -155,25 +162,52 @@ dbinom(50,100,.5) # probability of getting exactly 50 heads out of 100 coin flip
 
 # 1.  Get a subset of the "iris" data frame where it's just even-numbered rows
 
-seq(2,150,2) # here's the code to get a list of the even numbers between 2 and 150
+ind <- seq(2,150,2) 
+# here's the code to get a list of the even numbers between 2 and 150
+dat[ind,]
 
 
+# 2.  Create a new object called iris_chr which is a copy of iris, except where 
+# every column is a character class
 
-# 2.  Create a new object called iris_chr which is a copy of iris, except where every column is a character class
+# things I tried first but didn't work
+# iris_chr <- lapply(dat, as.character) #makes a list of items as char
+# iris_chr <- as.character(dat[]) #creates one big char of all entries 
+# str(iris_chr)
+# class(iris_chr)
 
+iris_chr <- iris
 
+# this for-loop won't work since names are characters with "" and not recognized
+# as row names
+# for (i in names(iris_chr)) {
+#   iris_chr$i <- as.character(iris$i)
+# }
 
-# 3.  Create a new numeric vector object named "Sepal.Area" which is the product of Sepal.Length and Sepal.Width
+iris_chr$Sepal.Length <- as.character(iris$Sepal.Length)
+
+for (i in 1:dim(iris_chr)[2]) {
+  iris_chr[i] <- as.character(iris_chr[i])
+}
+
+class(iris_chr)
+
+# 3.  Create a new numeric vector object named "Sepal.Area" which is the product
+# of Sepal.Length and Sepal.Width
+
+Sepal.Area <- dat$Sepal.Length * dat$Sepal.Width
 
 
 
 # 4.  Add Sepal.Area to the iris data frame as a new column
 
+dat$Sepal.Area <- Sepal.Area
 
 
-# 5.  Create a new dataframe that is a subset of iris using only rows where Sepal.Area is greater than 20 
-      # (name it big_area_iris)
+# 5.  Create a new dataframe that is a subset of iris using only rows where 
+# Sepal.Area is greater than 20 (name it big_area_iris)
 
+big_area_iris <- dat[dat$Sepal.Area > 20,]
 
 
 # 6.  Upload the last numbered section of this R script (with all answers filled in and tasks completed) 
