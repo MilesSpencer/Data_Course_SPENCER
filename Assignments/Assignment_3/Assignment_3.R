@@ -166,6 +166,9 @@ ind <- seq(2,150,2)
 # here's the code to get a list of the even numbers between 2 and 150
 dat[ind,]
 
+#this is a more complicated way, but it works
+dat[(1: dim(dat)[1] %% 2) == 0,]
+
 
 # 2.  Create a new object called iris_chr which is a copy of iris, except where 
 # every column is a character class
@@ -176,27 +179,32 @@ dat[ind,]
 # str(iris_chr)
 # class(iris_chr)
 
-iris_chr <- iris
-
 # this for-loop won't work since names are characters with "" and not recognized
 # as row names
 # for (i in names(iris_chr)) {
 #   iris_chr$i <- as.character(iris$i)
 # }
+# iris_chr$Sepal.Length <- as.character(iris$Sepal.Length)
 
-iris_chr$Sepal.Length <- as.character(iris$Sepal.Length)
+
+iris_chr <- iris
 
 for (i in 1:dim(iris_chr)[2]) {
   iris_chr[i] <- as.character(iris_chr[i])
 }
 
-class(iris_chr)
+iris_chr <- iris
+
+#this will work too, for vector names use [] not $
+for (j in names(iris_chr)) {
+  iris_chr[j] <- as.character(iris_chr[j])
+}
+
 
 # 3.  Create a new numeric vector object named "Sepal.Area" which is the product
 # of Sepal.Length and Sepal.Width
 
 Sepal.Area <- dat$Sepal.Length * dat$Sepal.Width
-
 
 
 # 4.  Add Sepal.Area to the iris data frame as a new column
