@@ -1,0 +1,39 @@
+Assignment 4
+In this assignment, you will describe your final project idea and data.
+
+For credit…
+Push all files to your github repository under the Assignment_4/ directory (txt document, fake data, example plot)
+Upload your txt file (tasks 1-3) to Canvas
+Tasks:
+Create a plaintext document named “final_project_idea.txt”
+
+In it, describe your idea for a data analysis final project
+
+Also, Describe the sort of data you will use, potential sources, and what the data might look like
+
+(If you already have data, skip this task) Create fake data that simulates what your final project data set might look like. 
+Preferrably a csv file
+
+Generate a plot (using ggplot) using either your real or fake data that shows at least one expected result
+
+The data I am looking at for my final project is my personal queue data from tutoring sessions over the last 6 years.
+
+I have variables for every logged tutoring session in that time. Which are: Dates, classes associated with each tutor
+session, and the time of when I started and ended the session. I would have a sample size of 3668+. But I also might be able
+to obtain general data for all other tutors during that time. It would be harder to get permission for other tutors. I 
+also have my time clock information to compare with as well.
+
+I could calculate my average weight times, the number of people I tutored at different times of the day, find what classes
+I tutored the most and how long I spent tutoring those topics. I hope to look for trends in how my performance change in 
+different intervals. I'm sure there are other factors I could be looking at as well.
+
+I will have to submit a proposal to Institutional Review Board to use this data since it contains personal information for 
+students. More, specifically name, UVUID, and course. Not sure if you have dealt with getting permission from them, but if
+that is a viable possibility that would be would I'd like to do. I plan to start the process on Monday, one way or another.
+
+I spoke with my the math lab director and he emailed the IRB Admin Syndie Ence. From the reply email she directed us to the
+Institutional Review Board website, https://www.uvu.edu/irb/, where the information about the application process is housed.
+ 
+I figured before I make a decision either way I could get your input. I'd prefer to use this data and overall get an idea
+of a profile of my tutoring. I think this would be wonderful for a professional webpage and a highlight would be great in
+a resume with a link to all my data. Still it all depends on if I could get the data soon enough. 
