@@ -13,16 +13,16 @@ A_states <- df %>%
 
 A_states %>%
   ggplot(aes(x = Last_Update, 
-             y = Confirmed)) +
-  geom_point(color = 'purple') +
+             y = Deaths)) +
+  geom_point(color = 'purple',
+             size = .7) +
   facet_wrap(~Province_State,
              scales = 'free') +
   geom_smooth(method = 'loess',
               se = FALSE,
               color = 'cyan') +
   scale_y_continuous(labels = scales::comma) +
-  labs(x = 'Date',
-       y = 'Cumulative Deaths',
+  labs(y = 'Cumulative Deaths',
        title = 'COVID 19 Deaths in "A" States') +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
@@ -61,15 +61,14 @@ state_max_fatality_rate %>%
 
 us_cum_deaths <- df %>% 
   group_by(Last_Update) %>% 
-  summarise(Cum_Death = sum(Confirmed)) 
+  summarise(Cum_Death = sum(Deaths)) 
 
 us_cum_deaths %>% 
   ggplot(aes(x = Last_Update,
              y = Cum_Death)) +
   geom_point(color = 'darkorange') +
   scale_y_continuous(labels = scales::comma) +
-  labs(x = 'Date',
-       y = 'Cumulative Deaths',
+  labs(y = 'Cumulative Deaths',
        title = 'Total COVID 19 Deaths in US') +
   theme_minimal() +
   theme(axis.text.y = element_text(angle=45),
