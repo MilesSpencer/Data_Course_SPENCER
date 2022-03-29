@@ -1,0 +1,134 @@
+---
+title: "Graduate School Admissions"
+author: "Miles Spencer"
+date: "3/28/2022"
+output: 
+  html_document:
+    code_folding: hide
+---
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,warning = FALSE,message = FALSE)
+library(tidyverse)
+library(modelr)
+library(easystats)
+library(GGally)
+```
+
+
+In this assignment I will explore and model the predictors of graduate school admission.
+
+---
+
+## The Data
+
+First loading and taking a glimpse of the data:
+```{r}
+df <- read_csv("../../Data/GradSchool_Admissions.csv")
+df %>% glimpse
+```
+
+<br>
+In the *admit* column, values are coded as 1=success (admitted) and 0=failure (not admitted).
+
+The values in *admit* are binary and need to be represented as logical variables:
+
+```{r}
+df$admit <- df$admit %>% as.logical()
+```
+
+<br>
+In the *rank* column, values are coded from 1 to 4, where 1 represents a top tier institution.
+
+The values in *rank* need to be factors, instead of numeric values:
+
+```{r}
+df$rank <- as.factor(df$rank)
+```
+
+<br>
+Now, let's take another glimpse of the data:
+
+```{r}
+df %>% glimpse
+```
+
+<br>
+We can plot admit on a bar graph to see the frequency of being admitted versus not admitted:
+
+```{r,fig.align='center',fig.height=3,fig.width=4}
+df %>%
+  ggplot(aes(x = admit)) +
+  geom_bar(width = .5) +
+  labs(x = "Admitted",
+       y = "Count")
+```
+
+We can also look at **ggpairs** of the data to see if any significant trends can be noticed:
+
+```{r,fig.align='center'}
+df %>% ggpairs
+```
+
+There doesn't appear to be any obvious trends between admission and the other factors individually. Let's set up multiple models with interactions between the independent variables and see if there is a model that can predict admission.
+
+<br>
+
+---
+
+## Logistic Regression Models
+
+Since the response variable (*admit*) is set to True/False values, we will use a logistic regression model to look at how 
+the other variables (*gre, gpa, rank*) may have had an effect on whether a student was admitted to graduate school.
+
+Here are five models with varying complexity:
+
+```{r}
+mod1 <- glm(df,
+            formula = admit ~ gre + gpa + rank,
+            family = "binomial")
+
+mod2 <- glm(df,
+            formula = admit ~ gre * gpa,
+            family = "binomial")
+
+mod3 <- glm(df,
+            formula = admit ~ gre * gpa + rank,
+            family = "binomial")
+
+mod4 <- glm(df,
+            formula = admit ~ gre + gpa * rank,
+            family = "binomial")
+
+mod5 <- glm(df,
+            formula = admit ~ gre * gpa * rank,
+            family = "binomial")
+
+compare_models(mod1,mod2,mod3,mod4,mod5,style = "se_p")
+```
+
+A comparison of the models:
+
+```{r}
+compare <- compare_performance(mod1,mod2,mod3,mod4,mod5,rank = TRUE)
+compare
+?compare_performance
+compare %>% plot()
+```
+
+Based on the highest Performance-Score, mod3 is the best model created. Although, it seems that the independent variables aren't great indicators of whether or not an applicant will be admitted into graduate school.
+
+Here are some graphs of predicted admission vs. gre broken up by rank with added predictions from mod3:
+
+```{r}
+add_predictions(data = df,
+                model = mod3,
+                type = "response") %>%
+  ggplot(aes(x = gre,y = pred)) +
+  geom_smooth() +
+  facet_wrap(~rank)
+```
+
+Based on mod3, we can see that a higher GRE score will increase your odds of getting into graduate school. But GRE score seems more important the higher the rank of the institution being applied to.
