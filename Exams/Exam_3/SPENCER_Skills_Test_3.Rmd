@@ -1,0 +1,141 @@
+---
+title: "Exam 3"
+author: "Miles Spencer"
+date: "4/6/2022"
+output:  
+  html_document:
+    code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,warning = FALSE,message = FALSE)
+library(tidyverse)
+library(modelr)
+library(easystats)
+library(janitor)
+library(broom)
+```
+
+## 1. Faculty Salary Cleaning & Plot
+
+Load and store csv file into a data frame, then get a glimpse:
+
+```{r}
+salary <- read_csv("./FacultySalaries_1995.csv")
+glimpse(salary)
+```
+
+There are some extra variables we do not need to create our plot. I will just select the ones applicable to what is needed, namely the tier and average salary for full, associate, and assistant professors, as well as the state the university resides in, which is needed for task 2.
+
+```{r}
+salary_select <- salary %>% 
+  select(Tier,
+         AvgFullProfSalary,
+         AvgAssocProfSalary,
+         AvgAssistProfSalary,
+         State)
+```
+
+The data frame is still not in tidy format. I will need to create a variable for the rank of the professor (full, associate, assistant) and put the salary of each in a column specifically for salary. This will be done with pivot_longer from the tidyverse library. There exits a tier called "VIIB" that will need to be removed, since it only has one observation and will not be relevant compared to the other values.
+
+```{r}
+salary_clean <- salary_select %>%  
+  filter(Tier != "VIIB") %>%
+  pivot_longer(cols = starts_with("Avg"),     # Columns that need to be pivoted
+               names_to = "Rank",             
+               values_to = "Salary") %>% 
+  mutate(Rank = case_when(                    # Change old column values to appropriate rank values
+    Rank == "AvgFullProfSalary" ~ "Full",
+    Rank == "AvgAssocProfSalary" ~ "Assoc",
+    Rank == "AvgAssistProfSalary" ~ "Assist")
+    )
+rm(salary_select)                                 # This data frame is no longer needed
+```
+
+Now that the data frame is in a tidy format, we can make our data plot:
+
+```{r,fig.align='center',fig.height=7,fig.width=5}
+salary_clean %>% 
+  ggplot(aes(x = Rank,
+             y = Salary,
+             fill = Rank)) +
+  geom_boxplot(size = .85,
+               outlier.size = 3) +
+  facet_wrap(~Tier) +
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 60,hjust = 1),
+        text = element_text(size = 18))
+```
+
+---
+
+## 2. ANOVA Model 
+
+The ANOVA model I need to create should test the influence of State, Tier, and Rank on Salary but won't have any interactions between those predictors included.
+
+```{r}
+aov_mod <- salary_clean %>% 
+  aov(data = .,
+      formula = Salary ~ State + Tier + Rank)
+
+summary(aov_mod)
+```
+
+---
+
+## 3. Juniper Data Cleaning
+
+Load and store csv file into a data frame, then get a glimpse:
+
+```{r}
+juniper <- read_csv("./Juniper_Oils.csv")
+glimpse(juniper)
+```
+
+Before trimming down unneeded variables it would be good to pivot_longer on the different chemical compounds that are listed as columns in the data. The values will become concentration levels.
+
+```{r}
+juniper_pivot <- juniper %>% 
+  pivot_longer(cols = c("alpha-pinene","para-cymene","alpha-terpineol","cedr-9-ene","alpha-cedrene","beta-cedrene","cis-thujopsene","alpha-himachalene","beta-chamigrene","cuparene","compound 1","alpha-chamigrene","widdrol","cedrol","beta-acorenol","alpha-acorenol","gamma-eudesmol","beta-eudesmol","alpha-eudesmol","cedr-8-en-13-ol","cedr-8-en-15-ol","compound 2","thujopsenal"),
+               names_to = "ChemicalID",
+               values_to = "Concentration")
+```
+
+Looking at the data, we really don't need to trim down the variables. Lets move straight to the plot.
+
+---
+
+## 4. Juniper Oil Plot
+
+So here is the plot of oil concentration vs years since the juniper burned:
+
+```{r,fig.align='center',fig.width=8}
+juniper_pivot %>% 
+  ggplot(aes(x = YearsSinceBurn,
+             y = Concentration)) +
+  geom_smooth() +
+  facet_wrap(~ChemicalID, scales = "free_y") +
+  theme_minimal()
+  
+```
+
+
+
+---
+
+## 5. Chemicals with Concentrations affected by Year Since Burn
+
+I will need to create a generalized linear model of Concentrations as affected by Year Since Burn and then we can look at a summary of the significant (p-value < 0.05) terms of the model.
+
+```{r,fig.align='center'}
+glm_mod <- juniper_pivot %>% 
+  glm(data = .,
+      formula = Concentration ~ ChemicalID * YearsSinceBurn)
+
+tidy(glm_mod) %>% 
+  filter(p.value < 0.05) %>% 
+  mutate(term = term %>% str_remove_all("ChemicalID")) %>% 
+  kableExtra::kable() %>% 
+  kableExtra::kable_classic()
+```
+
